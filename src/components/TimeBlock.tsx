@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Activity } from '../types';
+import { Activity, ActivityCategory, FoodType } from '../types';
 import { ActivityForm, ActivityFormData } from './ActivityForm';
-import { Button } from './Button';
 import { useActivities } from '../hooks/useActivities';
 import './TimeBlock.css';
 
@@ -21,9 +20,29 @@ const formatHourAccessible = (hour: number): string => {
   return `${hour12}:00 ${isPM ? 'PM' : 'AM'}`;
 };
 
+const getExertionEmoji = (exertionLevel: string): string => {
+  const emojiMap: Record<string, string> = {
+    'very-low': '🌙',
+    low: '🍃',
+    moderate: '⚡',
+    high: '🔥',
+    'very-high': '💪',
+  };
+  return emojiMap[exertionLevel] || '';
+};
+
+const getActivityEmoji = (activity: Activity): string => {
+  // Show food emoji for food activities
+  if (activity.category === ActivityCategory.Food) {
+    return activity.foodType === FoodType.Meal ? '🍽️' : '🍪';
+  }
+  // Otherwise show exertion emoji
+  return getExertionEmoji(activity.exertionLevel);
+};
+
 export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent = false }) => {
   const [showForm, setShowForm] = useState(false);
-  const { addActivity, updateActivity, deleteActivity } = useActivities();
+  const { addActivity, updateActivity, deleteActivityHour } = useActivities();
 
   const blockClasses = [
     'time-block',
@@ -64,10 +83,16 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
     setShowForm(false);
   };
 
-  const handleDelete = () => {
-    if (activity && window.confirm(`Delete "${activity.name}"?`)) {
-      deleteActivity(activity.id);
-      setShowForm(false);
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (activity) {
+      const duration = activity.endTime - activity.startTime;
+      const message =
+        duration > 1 ? `Delete this hour from "${activity.name}"?` : `Delete "${activity.name}"?`;
+
+      if (window.confirm(message)) {
+        deleteActivityHour(activity.id, hour);
+      }
     }
   };
 
@@ -93,6 +118,28 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
             )}
           </div>
         </button>
+        {activity && (
+          <span
+            className="time-block__emoji"
+            aria-label={
+              activity.category === ActivityCategory.Food
+                ? `Food: ${activity.foodType}`
+                : `Exertion level: ${activity.exertionLevel}`
+            }
+          >
+            {getActivityEmoji(activity)}
+          </span>
+        )}
+        {activity && (
+          <button
+            type="button"
+            className="time-block__delete"
+            onClick={handleDelete}
+            aria-label={`Delete ${activity.name}`}
+          >
+            ×
+          </button>
+        )}
       </article>
 
       {showForm && (
@@ -107,20 +154,31 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
             }}
             aria-label="Close form"
           />
-          <div className="time-block-modal__content">
+          <div
+            className="time-block-modal__content"
+            role="dialog"
+            aria-labelledby="activity-form-title"
+            aria-modal="true"
+          >
+            <div className="time-block-modal__header">
+              <h2 id="activity-form-title" className="time-block-modal__title">
+                {activity ? 'edit activity' : 'add activity'} - {formatHour(hour)}
+              </h2>
+              <button
+                type="button"
+                className="time-block-modal__close"
+                onClick={handleFormCancel}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
             <ActivityForm
               hour={hour}
               activity={activity || undefined}
               onSubmit={handleFormSubmit}
               onCancel={handleFormCancel}
             />
-            {activity && (
-              <div className="time-block-modal__delete">
-                <Button variant="secondary" onClick={handleDelete}>
-                  delete activity
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       )}

@@ -1,22 +1,8 @@
 .activity-form {
-  background-color: var(--color-bg);
-  border-radius: 16px;
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-lg);
+  background-color: #ffffff;
+  padding: var(--spacing-xl);
   max-width: 500px;
   width: 100%;
-}
-
-.activity-form__header {
-  margin-bottom: var(--spacing-lg);
-}
-
-.activity-form__title {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--color-text);
-  text-transform: lowercase;
-  margin: 0;
 }
 
 .activity-form__body {

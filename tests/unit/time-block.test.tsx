@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TimeBlock } from '../../src/components/TimeBlock';
 import { TimeBlockGrid } from '../../src/components/TimeBlockGrid';
-import { Activity, ExertionLevel, ActivityType } from '../../src/types';
+import { Activity, ExertionLevel, ActivityType, MoodState, DailyData } from '../../src/types';
 import { AppProvider } from '../../src/context/AppContext';
 
 describe('TimeBlock', () => {
@@ -166,32 +166,24 @@ describe('TimeBlock', () => {
     expect(screen.getByDisplayValue('Morning Walk')).toBeInTheDocument();
   });
 
-  it('shows delete button when editing existing activity', async () => {
-    const user = userEvent.setup();
+  it('shows delete button when activity exists', () => {
     render(
       <AppProvider>
         <TimeBlock hour={8} activity={mockActivity} />
       </AppProvider>
     );
 
-    const button = screen.getByRole('button', { name: /Edit activity: Morning Walk at 8:00 AM/i });
-    await user.click(button);
-
-    expect(screen.getByRole('button', { name: /delete activity/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /delete morning walk/i })).toBeInTheDocument();
   });
 
-  it('does not show delete button when adding new activity', async () => {
-    const user = userEvent.setup();
+  it('does not show delete button when no activity', () => {
     render(
       <AppProvider>
         <TimeBlock hour={8} activity={null} />
       </AppProvider>
     );
 
-    const button = screen.getByRole('button', { name: /Add activity at 8:00 AM/i });
-    await user.click(button);
-
-    expect(screen.queryByRole('button', { name: /delete activity/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
   });
 
   it('closes form when cancel button is clicked', async () => {
@@ -359,9 +351,52 @@ describe('TimeBlockGrid', () => {
       </AppProvider>
     );
     const blocks = screen.getAllByRole('article');
-    // First block should be midnight (00:00)
-    expect(blocks[0]).toHaveAccessibleName('12:00 AM');
-    // Last block should be 23:00 (11:00 PM)
-    expect(blocks[23]).toHaveAccessibleName('11:00 PM');
+    // First block should be 5:00 AM (start of morning)
+    expect(blocks[0]).toHaveAccessibleName('5:00 AM');
+    // Last block should be 4:00 AM (end of night section)
+    expect(blocks[23]).toHaveAccessibleName('4:00 AM');
+  });
+
+  it('handles activities that span midnight correctly', () => {
+    // Get today's date dynamically
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    // If hour < 5, today's "window day" is yesterday's calendar date
+    const windowDay: string =
+      currentHour < 5
+        ? new Date(new Date().setDate(now.getDate() - 1)).toISOString().split('T')[0]!
+        : now.toISOString().split('T')[0]!;
+
+    // Create a sleep activity from 10 PM to 6 AM (wraps around midnight)
+    const sleepActivity: Activity = {
+      id: 'sleep-1',
+      name: 'Sleep',
+      startTime: 22,
+      endTime: 30, // 22 + 8 hours = 30 (wraps to hours 22-29, i.e., 22,23,0,1,2,3,4,5)
+      exertionLevel: ExertionLevel.VeryLow,
+      type: ActivityType.Restorative,
+      date: windowDay,
+    };
+
+    // Manually add to localStorage to test
+    const dailyData: Record<string, DailyData> = {
+      [windowDay]: {
+        date: windowDay,
+        stats: { energy: 100, meals: 0, snacks: 0, mood: MoodState.Neutral },
+        activities: [sleepActivity],
+      },
+    };
+    localStorage.setItem('window_daily_data', JSON.stringify(dailyData));
+
+    const { container } = render(
+      <AppProvider>
+        <TimeBlockGrid />
+      </AppProvider>
+    );
+
+    // Check that the sleep activity appears in blocks 22, 23, 0, 1, 2, 3, 4, 5
+    const blocks = container.querySelectorAll('.time-block--has-activity');
+    expect(blocks.length).toBe(8); // Should span 8 hours
   });
 });

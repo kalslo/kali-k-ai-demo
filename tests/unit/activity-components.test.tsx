@@ -9,13 +9,25 @@ import { ExertionLevel, ActivityType } from '../../src/types';
 describe('ExertionSelector', () => {
   it('renders with label', () => {
     const onChange = vi.fn();
-    render(<ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />);
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
+    );
     expect(screen.getByText(/exertion level/i)).toBeInTheDocument();
   });
 
-  it('displays all exertion levels as options', () => {
+  it('displays all exertion levels with negative values for exerting activities', () => {
     const onChange = vi.fn();
-    render(<ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />);
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
+    );
 
     expect(screen.getByRole('button', { name: /very low -1/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /low -5/i })).toBeInTheDocument();
@@ -24,10 +36,31 @@ describe('ExertionSelector', () => {
     expect(screen.getByRole('button', { name: /very high -20/i })).toBeInTheDocument();
   });
 
+  it('displays all exertion levels with positive values for restorative activities', () => {
+    const onChange = vi.fn();
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Restorative}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /very low \+1/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /low \+5/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /moderate \+10/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /high \+15/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /very high \+20/i })).toBeInTheDocument();
+  });
+
   it('highlights selected exertion level', () => {
     const onChange = vi.fn();
     const { container } = render(
-      <ExertionSelector value={ExertionLevel.High} onChange={onChange} />
+      <ExertionSelector
+        value={ExertionLevel.High}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
     );
 
     const activeButton = container.querySelector('.exertion-selector__button--active');
@@ -37,7 +70,13 @@ describe('ExertionSelector', () => {
   it('calls onChange when exertion level is selected', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />);
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
+    );
 
     const lowButton = screen.getByRole('button', { name: /low -5/i });
     await user.click(lowButton);
@@ -48,7 +87,13 @@ describe('ExertionSelector', () => {
   it('is keyboard accessible', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />);
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
+    );
 
     const veryLowButton = screen.getByRole('button', { name: /very low -1/i });
     veryLowButton.focus();
@@ -60,7 +105,11 @@ describe('ExertionSelector', () => {
   it('shows energy cost indicator for each level', () => {
     const onChange = vi.fn();
     const { container } = render(
-      <ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
     );
 
     const indicators = container.querySelectorAll('.exertion-selector__cost');
@@ -70,7 +119,11 @@ describe('ExertionSelector', () => {
   it('applies different styles for each exertion level', () => {
     const onChange = vi.fn();
     const { container } = render(
-      <ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
     );
 
     expect(container.querySelector('.exertion-selector__button--very-low')).toBeInTheDocument();
@@ -82,7 +135,13 @@ describe('ExertionSelector', () => {
 
   it('has accessible group label', () => {
     const onChange = vi.fn();
-    render(<ExertionSelector value={ExertionLevel.Moderate} onChange={onChange} />);
+    render(
+      <ExertionSelector
+        value={ExertionLevel.Moderate}
+        onChange={onChange}
+        activityType={ActivityType.Exerting}
+      />
+    );
     expect(screen.getByRole('group', { name: /exertion level/i })).toBeInTheDocument();
   });
 });
@@ -167,12 +226,6 @@ describe('ActivityForm', () => {
     expect(screen.getByLabelText(/activity name/i)).toBeInTheDocument();
     expect(screen.getByRole('group', { name: /exertion level/i })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: /activity type/i })).toBeInTheDocument();
-  });
-
-  it('shows hour in form title', () => {
-    render(<ActivityForm hour={14} onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-
-    expect(screen.getByText(/14:00/i)).toBeInTheDocument();
   });
 
   it('submits form with correct data', async () => {

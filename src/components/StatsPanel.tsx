@@ -21,7 +21,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ stats, onMoodChange, cla
       </div>
 
       <div className="stats-panel__stat">
-        <FoodTracker foodPoints={stats.food} />
+        <FoodTracker meals={stats.meals} snacks={stats.snacks} />
       </div>
 
       <div className="stats-panel__stat">

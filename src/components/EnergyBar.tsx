@@ -7,11 +7,15 @@ interface EnergyBarProps {
 }
 
 export const EnergyBar: React.FC<EnergyBarProps> = ({ energy, maxEnergy }) => {
+  // Guard against NaN values
+  const safeEnergy = isNaN(energy) ? 0 : energy;
+  const safeMaxEnergy = isNaN(maxEnergy) || maxEnergy <= 0 ? 100 : maxEnergy;
+
   // Clamp energy value between 0 and maxEnergy
-  const clampedEnergy = Math.max(0, Math.min(energy, maxEnergy));
+  const clampedEnergy = Math.max(0, Math.min(safeEnergy, safeMaxEnergy));
 
   // Calculate percentage
-  const percentage = maxEnergy > 0 ? Math.round((clampedEnergy / maxEnergy) * 100) : 0;
+  const percentage = Math.round((clampedEnergy / safeMaxEnergy) * 100);
 
   // Determine state based on energy level
   const getEnergyState = (): 'good' | 'warning' | 'low' => {

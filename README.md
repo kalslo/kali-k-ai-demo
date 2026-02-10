@@ -8,15 +8,22 @@ A gamified 24-hour day planner that tracks your activities and their impact on y
 
 ## Documentation
 
-All project documentation is located in the [`docs/`](./docs) directory:
+### User Documentation
 
-- [Copilot Instructions](./.github/copilot-instructions.md) - Development guidelines and principles
+- [User Guide](./docs/USER_GUIDE.md) - Complete guide to using Window
+- [FAQ](./docs/FAQ.md) - Frequently asked questions
+
+### Developer Documentation
+
+- [Architecture](./docs/ARCHITECTURE.md) - System architecture and design decisions
+- [Deployment Guide](./docs/DEPLOYMENT.md) - Deploy to production
 - [Functional Requirements](./docs/functional-requirements.md) - Core app features and specifications
 - [UI Guidelines](./docs/ui-guidelines.md) - Design principles and accessibility requirements
 - [Testing Guidelines](./docs/testing-guidelines.md) - Testing standards and practices
 - [Coding Guidelines](./docs/coding-guidelines.md) - Code formatting and organization standards
 - [Tech Stack](./docs/tech-stack.md) - Technology choices and tooling
 - [Implementation Plan](./docs/implementation-plan.md) - Phased development roadmap
+- [Copilot Instructions](./.github/copilot-instructions.md) - Development guidelines and principles
 
 ## Getting Started
 

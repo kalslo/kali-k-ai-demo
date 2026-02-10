@@ -6,7 +6,12 @@ import { useCallback } from 'react';
 import { useAppState, useAppDispatch } from '../context/AppContext';
 import { loadFromLocalStorage, STORAGE_KEYS } from '../utils/storage';
 import { DailyData } from '../types';
-import { initializeDefaultStats, getTodayDateString } from '../utils/calculations';
+import {
+  initializeDefaultStats,
+  getTodayDateString,
+  parseISODate,
+  formatDateToISO,
+} from '../utils/calculations';
 
 export function useDayNavigation() {
   const { currentDate } = useAppState();
@@ -17,8 +22,26 @@ export function useDayNavigation() {
       const allData = loadFromLocalStorage<Record<string, DailyData>>(STORAGE_KEYS.DAILY_DATA);
 
       if (allData?.[date]) {
+        const dayData = allData[date];
+
+        // Ensure mood exists (migration from old data)
+        const mood =
+          dayData.stats?.mood !== undefined ? dayData.stats.mood : initializeDefaultStats().mood;
+
+        // Create DailyData with proper structure
+        const dailyDataPayload: DailyData = {
+          date: dayData.date || date,
+          stats: {
+            energy: dayData.stats?.energy || 0,
+            meals: dayData.stats?.meals || 0,
+            snacks: dayData.stats?.snacks || 0,
+            mood,
+          },
+          activities: dayData.activities || [],
+        };
+
         // Load existing data for this day
-        dispatch({ type: 'LOAD_DAY', payload: allData[date] });
+        dispatch({ type: 'LOAD_DAY', payload: dailyDataPayload });
       } else {
         // Initialize new day with default stats
         const newDayData: DailyData = {
@@ -38,16 +61,16 @@ export function useDayNavigation() {
   }, [loadDay]);
 
   const goToPreviousDay = useCallback(() => {
-    const currentDateObj = new Date(currentDate);
+    const currentDateObj = parseISODate(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() - 1);
-    const previousDate = currentDateObj.toISOString().split('T')[0];
+    const previousDate = formatDateToISO(currentDateObj);
     loadDay(previousDate);
   }, [currentDate, loadDay]);
 
   const goToNextDay = useCallback(() => {
-    const currentDateObj = new Date(currentDate);
+    const currentDateObj = parseISODate(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + 1);
-    const nextDate = currentDateObj.toISOString().split('T')[0];
+    const nextDate = formatDateToISO(currentDateObj);
     const today = getTodayDateString();
 
     // Don't allow navigation beyond today
@@ -68,6 +91,10 @@ export function useDayNavigation() {
     [loadDay]
   );
 
+  const clearCurrentDay = useCallback(() => {
+    dispatch({ type: 'RESET_DAY', payload: currentDate });
+  }, [dispatch, currentDate]);
+
   const isToday = currentDate === getTodayDateString();
   const isFutureDate = currentDate > getTodayDateString();
 
@@ -79,5 +106,6 @@ export function useDayNavigation() {
     goToPreviousDay,
     goToNextDay,
     goToDate,
+    clearCurrentDay,
   };
 }

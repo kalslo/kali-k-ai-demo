@@ -3,25 +3,7 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   padding: var(--spacing-xl);
-}
-
-.sleep-logger__header {
-  text-align: center;
-}
-
-.sleep-logger__title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text);
-  text-transform: lowercase;
-  margin: 0 0 var(--spacing-xs) 0;
-}
-
-.sleep-logger__subtitle {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  text-transform: lowercase;
-  margin: 0;
+  background: #ffffff;
 }
 
 .sleep-logger__body {

@@ -3,11 +3,9 @@ import {
   isSleepActivity,
   isFoodActivity,
   calculateSleepEnergy,
-  calculateFoodPoints,
   getSleepActivities,
   getFoodActivities,
   calculateTotalSleepEnergy,
-  calculateTotalFoodPoints,
   countMealsAndSnacks,
 } from '../../src/utils/specialActivities';
 import { Activity, ActivityCategory, FoodType, ExertionLevel, ActivityType } from '../../src/types';
@@ -69,7 +67,7 @@ describe('specialActivities', () => {
         endTime: 24,
         category: ActivityCategory.Sleep,
       };
-      expect(calculateSleepEnergy(onehourSleep)).toBe(15);
+      expect(calculateSleepEnergy(onehourSleep)).toBe(12.5);
     });
 
     it('calculates energy for 8-hour sleep', () => {
@@ -79,35 +77,11 @@ describe('specialActivities', () => {
         endTime: 8,
         category: ActivityCategory.Sleep,
       };
-      expect(calculateSleepEnergy(properSleep)).toBe(120); // 8 * 15
+      expect(calculateSleepEnergy(properSleep)).toBe(100); // 8 * 12.5
     });
 
     it('returns 0 for non-sleep activities', () => {
       expect(calculateSleepEnergy(baseActivity)).toBe(0);
-    });
-  });
-
-  describe('calculateFoodPoints', () => {
-    it('returns 30 points for meal', () => {
-      const mealActivity: Activity = {
-        ...baseActivity,
-        category: ActivityCategory.Food,
-        foodType: FoodType.Meal,
-      };
-      expect(calculateFoodPoints(mealActivity)).toBe(30);
-    });
-
-    it('returns 10 points for snack', () => {
-      const snackActivity: Activity = {
-        ...baseActivity,
-        category: ActivityCategory.Food,
-        foodType: FoodType.Snack,
-      };
-      expect(calculateFoodPoints(snackActivity)).toBe(10);
-    });
-
-    it('returns 0 for non-food activities', () => {
-      expect(calculateFoodPoints(baseActivity)).toBe(0);
     });
   });
 
@@ -121,8 +95,8 @@ describe('specialActivities', () => {
       ];
       const sleepActivities = getSleepActivities(activities);
       expect(sleepActivities).toHaveLength(2);
-      expect(sleepActivities[0].id).toBe('2');
-      expect(sleepActivities[1].id).toBe('4');
+      expect(sleepActivities[0]?.id).toBe('2');
+      expect(sleepActivities[1]?.id).toBe('4');
     });
 
     it('returns empty array when no sleep activities', () => {
@@ -141,8 +115,8 @@ describe('specialActivities', () => {
       ];
       const foodActivities = getFoodActivities(activities);
       expect(foodActivities).toHaveLength(2);
-      expect(foodActivities[0].id).toBe('2');
-      expect(foodActivities[1].id).toBe('4');
+      expect(foodActivities[0]?.id).toBe('2');
+      expect(foodActivities[1]?.id).toBe('4');
     });
   });
 
@@ -165,7 +139,7 @@ describe('specialActivities', () => {
         },
       ];
       const newEnergy = calculateTotalSleepEnergy(activities, 50);
-      expect(newEnergy).toBe(100); // 50 + (2*15) + (2*15) = 50 + 30 + 30 = 110, capped at 100
+      expect(newEnergy).toBe(100); // 50 + (2*12.5) + (2*12.5) = 50 + 25 + 25 = 100
     });
 
     it('caps energy at 100', () => {
@@ -184,37 +158,6 @@ describe('specialActivities', () => {
     it('returns current energy when no sleep activities', () => {
       const activities: Activity[] = [baseActivity];
       expect(calculateTotalSleepEnergy(activities, 75)).toBe(75);
-    });
-  });
-
-  describe('calculateTotalFoodPoints', () => {
-    it('sums food points from multiple activities', () => {
-      const activities: Activity[] = [
-        {
-          ...baseActivity,
-          id: '1',
-          category: ActivityCategory.Food,
-          foodType: FoodType.Meal,
-        },
-        {
-          ...baseActivity,
-          id: '2',
-          category: ActivityCategory.Food,
-          foodType: FoodType.Meal,
-        },
-        {
-          ...baseActivity,
-          id: '3',
-          category: ActivityCategory.Food,
-          foodType: FoodType.Snack,
-        },
-      ];
-      expect(calculateTotalFoodPoints(activities)).toBe(70); // 30 + 30 + 10
-    });
-
-    it('returns 0 when no food activities', () => {
-      const activities: Activity[] = [baseActivity];
-      expect(calculateTotalFoodPoints(activities)).toBe(0);
     });
   });
 

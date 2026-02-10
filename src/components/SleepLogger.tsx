@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
+import { SLEEP_ENERGY_PER_HOUR } from '../utils/constants';
 import './SleepLogger.css';
 
 interface SleepLoggerProps {
@@ -34,15 +35,10 @@ export const SleepLogger: React.FC<SleepLoggerProps> = ({ onAddSleep, onCancel }
   };
 
   const sleepHours = calculateHours(startHour, endHour);
-  const energyGain = sleepHours * 15;
+  const energyGain = sleepHours * SLEEP_ENERGY_PER_HOUR;
 
   return (
     <form className="sleep-logger" onSubmit={handleSubmit}>
-      <div className="sleep-logger__header">
-        <h3 className="sleep-logger__title">log sleep</h3>
-        <p className="sleep-logger__subtitle">track your rest and regain energy</p>
-      </div>
-
       <div className="sleep-logger__body">
         <div className="sleep-logger__time-fields">
           <div className="sleep-logger__field">

@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { Button } from './Button';
 import { SleepLogger } from './SleepLogger';
 import { FoodLogger } from './FoodLogger';
+import { WorkLogger } from './WorkLogger';
 import { Toast } from './Toast';
 import { useActivities } from '../hooks/useActivities';
 import { useToast } from '../hooks/useToast';
-import { FoodType } from '../types';
+import { FoodType, ActivityCategory, ActivityType, ExertionLevel } from '../types';
 import './QuickActions.css';
 
 export const QuickActions: React.FC = () => {
   const [showSleepLogger, setShowSleepLogger] = useState(false);
   const [showFoodLogger, setShowFoodLogger] = useState(false);
+  const [showWorkLogger, setShowWorkLogger] = useState(false);
   const { addActivity } = useActivities();
   const { toasts, showToast, removeToast } = useToast();
 
@@ -23,9 +25,9 @@ export const QuickActions: React.FC = () => {
       name: 'Sleep',
       startTime: bedtime,
       endTime: endTime,
-      exertionLevel: 0,
-      type: 'Restorative',
-      category: 'Sleep',
+      exertionLevel: ExertionLevel.VeryLow,
+      type: ActivityType.Restorative,
+      category: ActivityCategory.Sleep,
     });
 
     setShowSleepLogger(false);
@@ -34,32 +36,46 @@ export const QuickActions: React.FC = () => {
 
   const handleAddMeal = (name: string, hour: number) => {
     addActivity({
-      name,
+      name: `Ate: ${name}`,
       startTime: hour,
       endTime: hour + 1,
-      exertionLevel: 0,
-      type: 'Restorative',
-      category: 'Food',
+      exertionLevel: ExertionLevel.VeryLow,
+      type: ActivityType.Restorative,
+      category: ActivityCategory.Food,
       foodType: FoodType.Meal,
     });
 
     setShowFoodLogger(false);
-    showToast(`${name} logged as meal (+30 points)`, 'success');
+    showToast(`${name} logged as meal`, 'success');
   };
 
   const handleAddSnack = (name: string, hour: number) => {
     addActivity({
-      name,
+      name: `Ate: ${name}`,
       startTime: hour,
       endTime: hour + 1,
-      exertionLevel: 0,
-      type: 'Restorative',
-      category: 'Food',
+      exertionLevel: ExertionLevel.VeryLow,
+      type: ActivityType.Restorative,
+      category: ActivityCategory.Food,
       foodType: FoodType.Snack,
     });
 
     setShowFoodLogger(false);
-    showToast(`${name} logged as snack (+10 points)`, 'success');
+    showToast(`${name} logged as snack`, 'success');
+  };
+
+  const handleLogWork = (name: string, startHour: number, endHour: number) => {
+    addActivity({
+      name: `Work: ${name}`,
+      startTime: startHour,
+      endTime: endHour,
+      exertionLevel: ExertionLevel.Moderate,
+      type: ActivityType.Exerting,
+      category: ActivityCategory.General,
+    });
+
+    setShowWorkLogger(false);
+    showToast(`${name} logged successfully`, 'success');
   };
 
   return (
@@ -80,6 +96,13 @@ export const QuickActions: React.FC = () => {
             aria-label="Log food intake"
           >
             🍽️ log food
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => setShowWorkLogger(true)}
+            aria-label="Log work hours"
+          >
+            💻 log work
           </Button>
         </div>
       </div>
@@ -118,7 +141,7 @@ export const QuickActions: React.FC = () => {
                 ×
               </button>
             </div>
-            <SleepLogger onLogSleep={handleLogSleep} />
+            <SleepLogger onAddSleep={handleLogSleep} onCancel={() => setShowSleepLogger(false)} />
           </div>
         </div>
       )}
@@ -157,7 +180,11 @@ export const QuickActions: React.FC = () => {
                 ×
               </button>
             </div>
-            <FoodLogger onAddMeal={handleAddMeal} onAddSnack={handleAddSnack} />
+            <FoodLogger
+              onAddMeal={handleAddMeal}
+              onAddSnack={handleAddSnack}
+              onCancel={() => setShowFoodLogger(false)}
+            />
           </div>
 
           {toasts.map(toast => (
@@ -169,6 +196,45 @@ export const QuickActions: React.FC = () => {
               onClose={() => removeToast(toast.id)}
             />
           ))}
+        </div>
+      )}
+
+      {showWorkLogger && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowWorkLogger(false)}
+          onKeyDown={e => {
+            if (e.key === 'Escape') {
+              setShowWorkLogger(false);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close work logger"
+        >
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+          <div
+            className="modal-content"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-labelledby="work-logger-title"
+            aria-modal="true"
+          >
+            <div className="modal-header">
+              <h2 id="work-logger-title" className="modal-title">
+                log work
+              </h2>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={() => setShowWorkLogger(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <WorkLogger onAddWork={handleLogWork} onCancel={() => setShowWorkLogger(false)} />
+          </div>
         </div>
       )}
     </>

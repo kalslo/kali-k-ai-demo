@@ -48,7 +48,8 @@ export interface Activity {
 
 export interface UserStats {
   energy: number; // 0-100
-  food: number; // Points
+  meals: number; // Count of meals consumed
+  snacks: number; // Count of snacks consumed
   mood: MoodState;
 }
 

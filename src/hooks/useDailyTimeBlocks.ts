@@ -16,8 +16,10 @@ export function useDailyTimeBlocks(): TimeBlock[] {
     // Assign activities to their time blocks
     activities.forEach(activity => {
       for (let hour = activity.startTime; hour < activity.endTime; hour++) {
-        if (blocks[hour]) {
-          blocks[hour].activity = activity;
+        // Handle wrap-around for activities that span midnight
+        const blockIndex = hour % 24;
+        if (blocks[blockIndex]) {
+          blocks[blockIndex].activity = activity;
         }
       }
     });

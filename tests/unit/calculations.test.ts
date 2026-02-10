@@ -3,7 +3,6 @@ import {
   calculateEnergyImpact,
   isEnergyBelowGoal,
   clampEnergy,
-  calculateFoodPoints,
   getTimeBlocksForDay,
   formatHour,
   getTodayDateString,
@@ -62,27 +61,6 @@ describe('clampEnergy', () => {
   });
 });
 
-describe('calculateFoodPoints', () => {
-  it('calculates correct points for meals only', () => {
-    expect(calculateFoodPoints(3, 0)).toBe(90);
-    expect(calculateFoodPoints(1, 0)).toBe(30);
-  });
-
-  it('calculates correct points for snacks only', () => {
-    expect(calculateFoodPoints(0, 1)).toBe(10);
-    expect(calculateFoodPoints(0, 3)).toBe(30);
-  });
-
-  it('calculates correct points for meals and snacks', () => {
-    expect(calculateFoodPoints(3, 1)).toBe(100); // Daily goal
-    expect(calculateFoodPoints(2, 2)).toBe(80);
-  });
-
-  it('handles zero meals and snacks', () => {
-    expect(calculateFoodPoints(0, 0)).toBe(0);
-  });
-});
-
 describe('getTimeBlocksForDay', () => {
   it('returns 24 time blocks', () => {
     const blocks = getTimeBlocksForDay();
@@ -126,22 +104,33 @@ describe('getTodayDateString', () => {
     expect(dateString).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
-  it("returns today's date", () => {
-    const today = new Date();
-    const expected = today.toISOString().split('T')[0];
-    expect(getTodayDateString()).toBe(expected);
+  it("returns today's calendar date when hour >= 5", () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    if (currentHour >= 5) {
+      const expected = now.toISOString().split('T')[0];
+      expect(getTodayDateString()).toBe(expected);
+    } else {
+      // If current hour < 5, should return yesterday's date
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const expected = yesterday.toISOString().split('T')[0];
+      expect(getTodayDateString()).toBe(expected);
+    }
   });
 });
 
 describe('initializeDefaultStats', () => {
-  it('returns default stats with max energy', () => {
+  it('returns default stats with zero energy', () => {
     const stats = initializeDefaultStats();
-    expect(stats.energy).toBe(MAX_ENERGY);
+    expect(stats.energy).toBe(0);
   });
 
-  it('returns default stats with zero food', () => {
+  it('returns default stats with zero meals and snacks', () => {
     const stats = initializeDefaultStats();
-    expect(stats.food).toBe(0);
+    expect(stats.meals).toBe(0);
+    expect(stats.snacks).toBe(0);
   });
 
   it('returns default stats with neutral mood', () => {

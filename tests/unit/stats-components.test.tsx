@@ -84,72 +84,88 @@ describe('EnergyBar', () => {
     const progressbar = screen.getByRole('progressbar');
     expect(progressbar).toHaveAttribute('aria-valuenow', '100');
   });
+
+  it('handles NaN energy gracefully', () => {
+    render(<EnergyBar energy={NaN} maxEnergy={100} />);
+    const progressbar = screen.getByRole('progressbar');
+    // NaN should be treated as 0
+    expect(progressbar).toHaveAttribute('aria-valuenow', '0');
+    expect(screen.getByText('0%')).toBeInTheDocument();
+  });
+
+  it('handles NaN maxEnergy gracefully', () => {
+    render(<EnergyBar energy={50} maxEnergy={NaN} />);
+    const progressbar = screen.getByRole('progressbar');
+    // Should default to maxEnergy of 100
+    expect(progressbar).toHaveAttribute('aria-valuenow', '50');
+    expect(screen.getByText('50%')).toBeInTheDocument();
+  });
 });
 
 describe('FoodTracker', () => {
-  it('renders with food points', () => {
-    render(<FoodTracker foodPoints={60} />);
+  it('renders with meals and snacks', () => {
+    render(<FoodTracker meals={2} snacks={1} />);
     expect(screen.getByText(/food/i)).toBeInTheDocument();
   });
 
   it('displays correct number of meals consumed', () => {
-    render(<FoodTracker foodPoints={60} />); // 60 points = 2 meals
+    render(<FoodTracker meals={2} snacks={0} />);
     expect(screen.getByText(/2 meals/i)).toBeInTheDocument();
   });
 
   it('displays correct number of snacks consumed', () => {
-    render(<FoodTracker foodPoints={70} />); // 70 points = 2 meals + 1 snack
+    render(<FoodTracker meals={2} snacks={1} />);
     expect(screen.getByText(/1 snack/i)).toBeInTheDocument();
   });
 
-  it('handles zero food points', () => {
-    render(<FoodTracker foodPoints={0} />);
+  it('handles zero meals and snacks', () => {
+    render(<FoodTracker meals={0} snacks={0} />);
     expect(screen.getByText(/0 meals/i)).toBeInTheDocument();
     expect(screen.getByText(/0 snacks/i)).toBeInTheDocument();
   });
 
   it('displays pluralization correctly for meals', () => {
-    render(<FoodTracker foodPoints={30} />); // 1 meal
+    render(<FoodTracker meals={1} snacks={0} />);
     expect(screen.getByText(/1 meal · 0 snacks/i)).toBeInTheDocument();
   });
 
-  it('calculates partial snacks correctly', () => {
-    render(<FoodTracker foodPoints={95} />); // 3 meals + 0.5 snacks (rounds to 0)
+  it('displays pluralization correctly for snacks', () => {
+    render(<FoodTracker meals={3} snacks={1} />);
     expect(screen.getByText(/3 meals/i)).toBeInTheDocument();
-    expect(screen.getByText(/0 snacks/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 snack/i)).toBeInTheDocument();
   });
 
   it('shows visual indicators for meals goal', () => {
-    const { container } = render(<FoodTracker foodPoints={60} />);
+    const { container } = render(<FoodTracker meals={2} snacks={0} />);
     const mealIndicators = container.querySelectorAll('.food-tracker__meal-indicator');
     expect(mealIndicators).toHaveLength(3); // Should show 3 meal slots
   });
 
   it('marks completed meals visually', () => {
-    const { container } = render(<FoodTracker foodPoints={60} />); // 2 meals
+    const { container } = render(<FoodTracker meals={2} snacks={0} />);
     const completedMeals = container.querySelectorAll('.food-tracker__meal-indicator--completed');
     expect(completedMeals).toHaveLength(2);
   });
 
   it('shows visual indicator for snack goal', () => {
-    const { container } = render(<FoodTracker foodPoints={70} />);
+    const { container } = render(<FoodTracker meals={2} snacks={1} />);
     const snackIndicator = container.querySelector('.food-tracker__snack-indicator');
     expect(snackIndicator).toBeInTheDocument();
   });
 
   it('marks completed snack visually', () => {
-    const { container } = render(<FoodTracker foodPoints={100} />); // 3 meals + 1 snack
+    const { container } = render(<FoodTracker meals={3} snacks={1} />);
     const completedSnack = container.querySelector('.food-tracker__snack-indicator--completed');
     expect(completedSnack).toBeInTheDocument();
   });
 
   it('handles exceeding meal goal', () => {
-    render(<FoodTracker foodPoints={150} />); // 5 meals
+    render(<FoodTracker meals={5} snacks={0} />);
     expect(screen.getByText(/5 meals/i)).toBeInTheDocument();
   });
 
   it('has accessible structure', () => {
-    render(<FoodTracker foodPoints={60} />);
+    render(<FoodTracker meals={2} snacks={0} />);
     expect(screen.getByRole('region', { name: /food tracker/i })).toBeInTheDocument();
   });
 });
@@ -183,7 +199,9 @@ describe('MoodSelector', () => {
     render(<MoodSelector mood={MoodState.Neutral} onMoodChange={onMoodChange} />);
 
     const buttons = screen.getAllByRole('button');
-    await user.click(buttons[0]); // Click first mood option
+    const firstButton = buttons[0];
+    if (!firstButton) throw new Error('Button not found');
+    await user.click(firstButton); // Click first mood option
 
     expect(onMoodChange).toHaveBeenCalledTimes(1);
   });
@@ -194,7 +212,9 @@ describe('MoodSelector', () => {
     render(<MoodSelector mood={MoodState.Neutral} onMoodChange={onMoodChange} />);
 
     const buttons = screen.getAllByRole('button');
-    await user.click(buttons[4]); // Click VeryHappy (last option)
+    const veryHappyButton = buttons[4]; // VeryHappy (last option)
+    if (!veryHappyButton) throw new Error('Button not found');
+    await user.click(veryHappyButton);
 
     expect(onMoodChange).toHaveBeenCalledWith(MoodState.VeryHappy);
   });
@@ -205,7 +225,9 @@ describe('MoodSelector', () => {
     render(<MoodSelector mood={MoodState.Neutral} onMoodChange={onMoodChange} />);
 
     const buttons = screen.getAllByRole('button');
-    buttons[0].focus();
+    const firstButton = buttons[0];
+    if (!firstButton) throw new Error('Button not found');
+    firstButton.focus();
 
     await user.keyboard('{Enter}');
     expect(onMoodChange).toHaveBeenCalledTimes(1);
@@ -232,7 +254,8 @@ describe('MoodSelector', () => {
 describe('StatsPanel', () => {
   const mockStats = {
     energy: 75,
-    food: 60,
+    meals: 2,
+    snacks: 1,
     mood: MoodState.Happy,
   };
 
@@ -253,11 +276,12 @@ describe('StatsPanel', () => {
     expect(progressbar).toHaveAttribute('aria-valuenow', '75');
   });
 
-  it('passes food points to FoodTracker', () => {
+  it('passes meals and snacks to FoodTracker', () => {
     const onMoodChange = vi.fn();
     render(<StatsPanel stats={mockStats} onMoodChange={onMoodChange} />);
 
     expect(screen.getByText(/2 meals/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 snack/i)).toBeInTheDocument();
   });
 
   it('passes mood to MoodSelector', () => {

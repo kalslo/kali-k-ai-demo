@@ -36,10 +36,6 @@ export const FoodLogger: React.FC<FoodLoggerProps> = ({ onAddMeal, onAddSnack, o
 
   return (
     <form className="food-logger" onSubmit={handleSubmit}>
-      <div className="food-logger__header">
-        <h3 className="food-logger__title">log food</h3>
-      </div>
-
       <div className="food-logger__body">
         <div className="food-logger__type-selector">
           <button
@@ -51,7 +47,6 @@ export const FoodLogger: React.FC<FoodLoggerProps> = ({ onAddMeal, onAddSnack, o
             aria-pressed={foodType === FoodType.Meal}
           >
             <span className="food-logger__type-name">meal</span>
-            <span className="food-logger__type-points">+30</span>
           </button>
           <button
             type="button"
@@ -62,7 +57,6 @@ export const FoodLogger: React.FC<FoodLoggerProps> = ({ onAddMeal, onAddSnack, o
             aria-pressed={foodType === FoodType.Snack}
           >
             <span className="food-logger__type-name">snack</span>
-            <span className="food-logger__type-points">+10</span>
           </button>
         </div>
 

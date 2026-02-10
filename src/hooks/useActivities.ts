@@ -5,14 +5,6 @@
 import { useCallback } from 'react';
 import { Activity, ExertionLevel, ActivityType, ActivityCategory, FoodType } from '../types';
 import { useAppState, useAppDispatch } from '../context/AppContext';
-import { calculateEnergyImpact } from '../utils/calculations';
-import {
-  calculateSleepEnergy,
-  calculateFoodPoints,
-  isSleepActivity,
-  isFoodActivity,
-} from '../utils/specialActivities';
-import { useStats } from './useStats';
 
 interface AddActivityParams {
   name: string;
@@ -35,7 +27,6 @@ interface UpdateActivityParams {
 export function useActivities() {
   const { activities, currentDate } = useAppState();
   const dispatch = useAppDispatch();
-  const { updateEnergy, updateFood } = useStats();
 
   const addActivity = useCallback(
     (params: AddActivityParams) => {
@@ -52,27 +43,9 @@ export function useActivities() {
       };
 
       dispatch({ type: 'ADD_ACTIVITY', payload: activity });
-
-      // Calculate and apply impacts
-      if (isSleepActivity(activity)) {
-        // Sleep activities restore energy at +15/hour
-        const energyGained = calculateSleepEnergy(activity);
-        updateEnergy(energyGained);
-      } else if (isFoodActivity(activity)) {
-        // Food activities add food points
-        const foodPoints = calculateFoodPoints(activity);
-        updateFood(foodPoints);
-      } else {
-        // Regular activities affect energy based on exertion level
-        const hourCount = activity.endTime - activity.startTime;
-        const energyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
-        const totalEnergyImpact = energyPerHour * hourCount;
-        updateEnergy(totalEnergyImpact);
-      }
-
       return activity;
     },
-    [dispatch, updateEnergy, updateFood, currentDate]
+    [dispatch, currentDate]
   );
 
   const updateActivity = useCallback(
@@ -86,68 +59,84 @@ export function useActivities() {
       };
 
       dispatch({ type: 'UPDATE_ACTIVITY', payload: updatedActivity });
-
-      // Reverse old impacts
-      if (isSleepActivity(oldActivity)) {
-        const oldEnergy = calculateSleepEnergy(oldActivity);
-        updateEnergy(-oldEnergy);
-      } else if (isFoodActivity(oldActivity)) {
-        const oldFood = calculateFoodPoints(oldActivity);
-        updateFood(-oldFood);
-      } else {
-        const oldHourCount = oldActivity.endTime - oldActivity.startTime;
-        const oldEnergyPerHour = calculateEnergyImpact(oldActivity.exertionLevel, oldActivity.type);
-        const oldTotalImpact = oldEnergyPerHour * oldHourCount;
-        updateEnergy(-oldTotalImpact);
-      }
-
-      // Apply new impacts
-      if (isSleepActivity(updatedActivity)) {
-        const newEnergy = calculateSleepEnergy(updatedActivity);
-        updateEnergy(newEnergy);
-      } else if (isFoodActivity(updatedActivity)) {
-        const newFood = calculateFoodPoints(updatedActivity);
-        updateFood(newFood);
-      } else {
-        const newHourCount = updatedActivity.endTime - updatedActivity.startTime;
-        const newEnergyPerHour = calculateEnergyImpact(
-          updatedActivity.exertionLevel,
-          updatedActivity.type
-        );
-        const newTotalImpact = newEnergyPerHour * newHourCount;
-        updateEnergy(newTotalImpact);
-      }
     },
-    [activities, dispatch, updateEnergy, updateFood]
+    [activities, dispatch]
   );
 
   const deleteActivity = useCallback(
     (activityId: string) => {
+      dispatch({ type: 'DELETE_ACTIVITY', payload: activityId });
+    },
+    [dispatch]
+  );
+
+  const deleteActivityHour = useCallback(
+    (activityId: string, hour: number) => {
       const activity = activities.find(a => a.id === activityId);
       if (!activity) return;
 
-      dispatch({ type: 'DELETE_ACTIVITY', payload: activityId });
+      const duration = activity.endTime - activity.startTime;
 
-      // Reverse impacts
-      if (isSleepActivity(activity)) {
-        const energyGained = calculateSleepEnergy(activity);
-        updateEnergy(-energyGained);
-      } else if (isFoodActivity(activity)) {
-        const foodPoints = calculateFoodPoints(activity);
-        updateFood(-foodPoints);
-      } else {
-        const hourCount = activity.endTime - activity.startTime;
-        const energyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
-        const totalEnergyImpact = energyPerHour * hourCount;
-        updateEnergy(-totalEnergyImpact);
+      // If it's a 1-hour activity, delete it entirely
+      if (duration <= 1) {
+        dispatch({ type: 'DELETE_ACTIVITY', payload: activityId });
+        return;
       }
+
+      // If deleting the first hour, update startTime
+      if (hour === activity.startTime) {
+        const updatedActivity: Activity = {
+          ...activity,
+          startTime: activity.startTime + 1,
+        };
+        dispatch({ type: 'UPDATE_ACTIVITY', payload: updatedActivity });
+        return;
+      }
+
+      // If deleting the last hour, update endTime
+      if (hour === activity.endTime - 1) {
+        const updatedActivity: Activity = {
+          ...activity,
+          endTime: activity.endTime - 1,
+        };
+        dispatch({ type: 'UPDATE_ACTIVITY', payload: updatedActivity });
+        return;
+      }
+
+      // If deleting a middle hour, split into two activities
+      // First part: from startTime to hour
+      const updatedActivity: Activity = {
+        ...activity,
+        endTime: hour,
+      };
+
+      // Second part: from hour + 1 to endTime
+      const newActivity: Activity = {
+        ...activity,
+        id: crypto.randomUUID(),
+        startTime: hour + 1,
+        endTime: activity.endTime,
+      };
+
+      // Update the first part and add the second part
+      dispatch({ type: 'UPDATE_ACTIVITY', payload: updatedActivity });
+      dispatch({ type: 'ADD_ACTIVITY', payload: newActivity });
     },
-    [activities, dispatch, updateEnergy, updateFood]
+    [activities, dispatch]
   );
 
   const getActivitiesForHour = useCallback(
     (hour: number) => {
-      return activities.filter(activity => hour >= activity.startTime && hour < activity.endTime);
+      return activities.filter(activity => {
+        // Handle activities that span midnight (endTime > 23)
+        if (activity.endTime > 23) {
+          // Activity wraps around midnight
+          // Check if hour is in the range [startTime, 23] OR [0, endTime % 24)
+          return hour >= activity.startTime || hour < activity.endTime % 24;
+        }
+        // Normal case: activity within same day
+        return hour >= activity.startTime && hour < activity.endTime;
+      });
     },
     [activities]
   );
@@ -157,6 +146,7 @@ export function useActivities() {
     addActivity,
     updateActivity,
     deleteActivity,
+    deleteActivityHour,
     getActivitiesForHour,
   };
 }

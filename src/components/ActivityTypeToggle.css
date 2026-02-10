@@ -15,15 +15,15 @@
 }
 
 .activity-type-toggle__button {
-  min-height: 64px;
-  padding: var(--spacing-sm);
+  min-height: 44px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   background-color: var(--color-bg-secondary);
   border: 2px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-xs);
@@ -48,7 +48,7 @@
 }
 
 .activity-type-toggle__type-name {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-text);
   text-transform: lowercase;
@@ -58,6 +58,7 @@
   font-size: 0.75rem;
   color: var(--color-text-secondary);
   text-transform: lowercase;
+  display: none;
 }
 
 /* Color coding for activity types */

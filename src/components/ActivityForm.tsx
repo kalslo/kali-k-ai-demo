@@ -20,10 +20,6 @@ export interface ActivityFormData {
   type: ActivityType;
 }
 
-const formatHour = (hour: number): string => {
-  return `${String(hour).padStart(2, '0')}:00`;
-};
-
 export const ActivityForm: React.FC<ActivityFormProps> = ({
   hour,
   activity,
@@ -57,13 +53,9 @@ export const ActivityForm: React.FC<ActivityFormProps> = ({
 
   return (
     <form className="activity-form" onSubmit={handleSubmit}>
-      <div className="activity-form__header">
-        <h3 className="activity-form__title">
-          {activity ? 'edit activity' : 'add activity'} - {formatHour(hour)}
-        </h3>
-      </div>
-
       <div className="activity-form__body">
+        <ActivityTypeToggle value={type} onChange={setType} />
+
         <Input
           label="activity name"
           id="activity-name"
@@ -76,9 +68,7 @@ export const ActivityForm: React.FC<ActivityFormProps> = ({
           placeholder="e.g., morning walk"
         />
 
-        <ExertionSelector value={exertionLevel} onChange={setExertionLevel} />
-
-        <ActivityTypeToggle value={type} onChange={setType} />
+        <ExertionSelector value={exertionLevel} onChange={setExertionLevel} activityType={type} />
       </div>
 
       <div className="activity-form__actions">

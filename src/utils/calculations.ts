@@ -9,6 +9,7 @@ import {
   MIN_ENERGY,
   ENERGY_GOAL_THRESHOLD,
   HOURS_PER_DAY,
+  DAY_START_HOUR,
 } from './constants';
 
 /**
@@ -44,16 +45,6 @@ export function clampEnergy(energy: number): number {
 }
 
 /**
- * Calculate total food points from meals and snacks
- * @param meals - Number of meals
- * @param snacks - Number of snacks
- * @returns Total food points
- */
-export function calculateFoodPoints(meals: number, snacks: number): number {
-  return meals * 30 + snacks * 10;
-}
-
-/**
  * Generate an array of time blocks for a full day (0-23 hours)
  * @returns Array of 24 time blocks
  */
@@ -84,12 +75,48 @@ export function getCurrentHour(): number {
 }
 
 /**
+ * Format a Date object to ISO string (YYYY-MM-DD) using local time
+ * @param date - Date object to format
+ * @returns ISO date string in local timezone
+ */
+export function formatDateToISO(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Parse ISO date string (YYYY-MM-DD) to Date object in local timezone
+ * @param dateString - ISO date string
+ * @returns Date object at local midnight
+ */
+export function parseISODate(dateString: string): Date {
+  const parts = dateString.split('-').map(Number);
+  const [year, month, day] = parts;
+  if (year === undefined || month === undefined || day === undefined) {
+    throw new Error('Invalid date string format');
+  }
+  return new Date(year, month - 1, day);
+}
+
+/**
  * Get today's date as ISO string (YYYY-MM-DD)
- * @returns ISO date string
+ * Accounts for day starting at 5 AM - hours 0-4 belong to previous calendar day
+ * @returns ISO date string for the current "window day"
  */
 export function getTodayDateString(): string {
-  const today = new Date();
-  return today.toISOString().split('T')[0] ?? '';
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // If it's between midnight and 4:59 AM, this counts as the previous calendar day
+  if (currentHour < DAY_START_HOUR) {
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    return formatDateToISO(yesterday);
+  }
+
+  return formatDateToISO(now);
 }
 
 /**
@@ -98,8 +125,9 @@ export function getTodayDateString(): string {
  */
 export function initializeDefaultStats(): UserStats {
   return {
-    energy: MAX_ENERGY,
-    food: 0,
+    energy: MIN_ENERGY,
+    meals: 0,
+    snacks: 0,
     mood: MoodState.Neutral,
   };
 }

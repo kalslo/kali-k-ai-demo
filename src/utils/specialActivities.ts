@@ -3,7 +3,7 @@
  */
 
 import { Activity, ActivityCategory, FoodType } from '../types';
-import { SLEEP_ENERGY_PER_HOUR, MEAL_POINTS, SNACK_POINTS, MAX_ENERGY } from './constants';
+import { SLEEP_ENERGY_PER_HOUR, MAX_ENERGY } from './constants';
 
 /**
  * Check if an activity is a sleep activity
@@ -36,19 +36,6 @@ export function calculateSleepEnergy(activity: Activity): number {
 }
 
 /**
- * Calculate food points from a food activity
- * @param activity Food activity
- * @returns Food points earned
- */
-export function calculateFoodPoints(activity: Activity): number {
-  if (!isFoodActivity(activity)) {
-    return 0;
-  }
-
-  return activity.foodType === FoodType.Meal ? MEAL_POINTS : SNACK_POINTS;
-}
-
-/**
  * Get all sleep activities from an activity list
  */
 export function getSleepActivities(activities: Activity[]): Activity[] {
@@ -75,16 +62,6 @@ export function calculateTotalSleepEnergy(activities: Activity[], currentEnergy:
   }, 0);
 
   return Math.min(currentEnergy + totalSleepEnergy, MAX_ENERGY);
-}
-
-/**
- * Calculate total food points from all food activities
- */
-export function calculateTotalFoodPoints(activities: Activity[]): number {
-  const foodActivities = getFoodActivities(activities);
-  return foodActivities.reduce((total, activity) => {
-    return total + calculateFoodPoints(activity);
-  }, 0);
 }
 
 /**
