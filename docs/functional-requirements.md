@@ -4,10 +4,6 @@
 
 **Window** is a gamified 24-hour day planner that tracks user activities and their impact on daily stats. The application uses a time-block based interface divided into 1-hour segments spanning from midnight to midnight.
 
-## Design Principles
-
-The app should embody the concept of a "window" - feeling light, airy, warm, and visually pleasing. The UI should create an inviting and calming user experience.
-
 ## Core Features
 
 ### 1. Time Management
