@@ -49,6 +49,9 @@
   justify-content: center;
   z-index: 1000;
   padding: var(--spacing-md);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .modal-content {

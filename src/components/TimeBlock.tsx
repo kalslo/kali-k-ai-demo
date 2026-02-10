@@ -119,14 +119,7 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
           </div>
         </button>
         {activity && (
-          <span
-            className="time-block__emoji"
-            aria-label={
-              activity.category === ActivityCategory.Food
-                ? `Food: ${activity.foodType}`
-                : `Exertion level: ${activity.exertionLevel}`
-            }
-          >
+          <span className="time-block__emoji" aria-hidden="true">
             {getActivityEmoji(activity)}
           </span>
         )}
@@ -144,11 +137,10 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
 
       {showForm && (
         <div className="time-block-modal">
-          <div
+          <button
+            type="button"
             className="time-block-modal__backdrop"
             onClick={handleFormCancel}
-            role="button"
-            tabIndex={0}
             onKeyDown={e => {
               if (e.key === 'Escape') handleFormCancel();
             }}

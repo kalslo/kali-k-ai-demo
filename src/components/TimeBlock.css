@@ -52,7 +52,7 @@
   padding: 0;
   background: transparent;
   border: none;
-  color: #999999;
+  color: #666666;
   font-size: 2rem;
   line-height: 1;
   cursor: pointer;
@@ -156,6 +156,9 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: fadeIn 0.2s ease;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .time-block-modal__content {

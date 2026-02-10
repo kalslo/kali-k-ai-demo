@@ -108,7 +108,8 @@ export const QuickActions: React.FC = () => {
       </div>
 
       {showSleepLogger && (
-        <div
+        <button
+          type="button"
           className="modal-backdrop"
           onClick={() => setShowSleepLogger(false)}
           onKeyDown={e => {
@@ -116,8 +117,6 @@ export const QuickActions: React.FC = () => {
               setShowSleepLogger(false);
             }
           }}
-          role="button"
-          tabIndex={0}
           aria-label="Close sleep logger"
         >
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
@@ -143,11 +142,12 @@ export const QuickActions: React.FC = () => {
             </div>
             <SleepLogger onAddSleep={handleLogSleep} onCancel={() => setShowSleepLogger(false)} />
           </div>
-        </div>
+        </button>
       )}
 
       {showFoodLogger && (
-        <div
+        <button
+          type="button"
           className="modal-backdrop"
           onClick={() => setShowFoodLogger(false)}
           onKeyDown={e => {
@@ -155,8 +155,6 @@ export const QuickActions: React.FC = () => {
               setShowFoodLogger(false);
             }
           }}
-          role="button"
-          tabIndex={0}
           aria-label="Close food logger"
         >
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
@@ -196,11 +194,12 @@ export const QuickActions: React.FC = () => {
               onClose={() => removeToast(toast.id)}
             />
           ))}
-        </div>
+        </button>
       )}
 
       {showWorkLogger && (
-        <div
+        <button
+          type="button"
           className="modal-backdrop"
           onClick={() => setShowWorkLogger(false)}
           onKeyDown={e => {
@@ -208,8 +207,6 @@ export const QuickActions: React.FC = () => {
               setShowWorkLogger(false);
             }
           }}
-          role="button"
-          tabIndex={0}
           aria-label="Close work logger"
         >
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
@@ -235,7 +232,7 @@ export const QuickActions: React.FC = () => {
             </div>
             <WorkLogger onAddWork={handleLogWork} onCancel={() => setShowWorkLogger(false)} />
           </div>
-        </div>
+        </button>
       )}
     </>
   );
