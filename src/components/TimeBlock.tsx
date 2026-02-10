@@ -1,5 +1,8 @@
-import React from 'react';
-import { Activity, ExertionLevel, ActivityType } from '../types';
+import React, { useState } from 'react';
+import { Activity } from '../types';
+import { ActivityForm, ActivityFormData } from './ActivityForm';
+import { Button } from './Button';
+import { useActivities } from '../hooks/useActivities';
 import './TimeBlock.css';
 
 interface TimeBlockProps {
@@ -18,25 +21,10 @@ const formatHourAccessible = (hour: number): string => {
   return `${hour12}:00 ${isPM ? 'PM' : 'AM'}`;
 };
 
-const getActivityDuration = (activity: Activity): string => {
-  const duration = activity.endTime - activity.startTime;
-  return duration === 1 ? '1 hour' : `${duration} hours`;
-};
-
-const EXERTION_LABELS: Record<ExertionLevel, string> = {
-  [ExertionLevel.VeryLow]: 'very low',
-  [ExertionLevel.Low]: 'low',
-  [ExertionLevel.Moderate]: 'moderate',
-  [ExertionLevel.High]: 'high',
-  [ExertionLevel.VeryHigh]: 'very high',
-};
-
-const ACTIVITY_TYPE_LABELS: Record<ActivityType, string> = {
-  [ActivityType.Exerting]: 'exerting',
-  [ActivityType.Restorative]: 'restorative',
-};
-
 export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent = false }) => {
+  const [showForm, setShowForm] = useState(false);
+  const { addActivity, updateActivity, deleteActivity } = useActivities();
+
   const blockClasses = [
     'time-block',
     activity ? 'time-block--has-activity' : 'time-block--empty',
@@ -45,35 +33,97 @@ export const TimeBlock: React.FC<TimeBlockProps> = ({ hour, activity, isCurrent 
     .filter(Boolean)
     .join(' ');
 
-  return (
-    <article className={blockClasses} aria-label={formatHourAccessible(hour)}>
-      <div className="time-block__header">
-        <span className="time-block__time">{formatHour(hour)}</span>
-        {isCurrent && <span className="time-block__current-badge">now</span>}
-      </div>
+  const blockStyle = {};
 
-      {activity ? (
-        <div className="time-block__content">
-          <div className="time-block__activity-name">{activity.name}</div>
-          <div className="time-block__meta">
-            <span className="time-block__duration">{getActivityDuration(activity)}</span>
-            <div className="time-block__indicators">
-              <span
-                className={`time-block__exertion time-block__exertion--${activity.exertionLevel}`}
-                title={`Exertion: ${EXERTION_LABELS[activity.exertionLevel]}`}
-              />
-              <span
-                className={`time-block__type time-block__type--${activity.type}`}
-                title={ACTIVITY_TYPE_LABELS[activity.type]}
-              />
-            </div>
+  const handleClick = () => {
+    setShowForm(true);
+  };
+
+  const handleFormSubmit = (data: ActivityFormData) => {
+    if (activity) {
+      // Update existing activity
+      updateActivity(activity.id, {
+        name: data.name,
+        exertionLevel: data.exertionLevel,
+        type: data.type,
+      });
+    } else {
+      // Add new activity
+      addActivity({
+        name: data.name,
+        startTime: data.hour,
+        endTime: data.hour + 1,
+        exertionLevel: data.exertionLevel,
+        type: data.type,
+      });
+    }
+    setShowForm(false);
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+  };
+
+  const handleDelete = () => {
+    if (activity && window.confirm(`Delete "${activity.name}"?`)) {
+      deleteActivity(activity.id);
+      setShowForm(false);
+    }
+  };
+
+  return (
+    <>
+      <article className={blockClasses} style={blockStyle} aria-label={formatHourAccessible(hour)}>
+        <button
+          type="button"
+          className="time-block__button"
+          onClick={handleClick}
+          aria-label={
+            activity
+              ? `Edit activity: ${activity.name} at ${formatHourAccessible(hour)}`
+              : `Add activity at ${formatHourAccessible(hour)}`
+          }
+        >
+          <span className="time-block__time">{formatHour(hour)}</span>
+          <div className="time-block__content">
+            {activity ? (
+              <span className="time-block__activity">{activity.name}</span>
+            ) : (
+              <span className="time-block__empty">---</span>
+            )}
+          </div>
+        </button>
+      </article>
+
+      {showForm && (
+        <div className="time-block-modal">
+          <div
+            className="time-block-modal__backdrop"
+            onClick={handleFormCancel}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === 'Escape') handleFormCancel();
+            }}
+            aria-label="Close form"
+          />
+          <div className="time-block-modal__content">
+            <ActivityForm
+              hour={hour}
+              activity={activity || undefined}
+              onSubmit={handleFormSubmit}
+              onCancel={handleFormCancel}
+            />
+            {activity && (
+              <div className="time-block-modal__delete">
+                <Button variant="secondary" onClick={handleDelete}>
+                  delete activity
+                </Button>
+              </div>
+            )}
           </div>
         </div>
-      ) : (
-        <div className="time-block__empty-state">
-          <span className="time-block__empty-text">free</span>
-        </div>
       )}
-    </article>
+    </>
   );
 };

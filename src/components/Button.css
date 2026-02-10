@@ -5,7 +5,7 @@
   gap: var(--spacing-sm);
 
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   font-weight: 500;
   text-transform: lowercase;
   transition: all var(--transition-fast);
@@ -48,7 +48,7 @@
 }
 
 .button--primary:hover:not(:disabled) {
-  background-color: #e69450;
+  background-color: #db2777;
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }

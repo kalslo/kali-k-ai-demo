@@ -3,68 +3,122 @@
  */
 
 import { useCallback } from 'react';
-import { Activity, ExertionLevel, ActivityType } from '../types';
+import { Activity, ExertionLevel, ActivityType, ActivityCategory, FoodType } from '../types';
 import { useAppState, useAppDispatch } from '../context/AppContext';
 import { calculateEnergyImpact } from '../utils/calculations';
+import {
+  calculateSleepEnergy,
+  calculateFoodPoints,
+  isSleepActivity,
+  isFoodActivity,
+} from '../utils/specialActivities';
 import { useStats } from './useStats';
 
+interface AddActivityParams {
+  name: string;
+  startTime: number;
+  endTime: number;
+  exertionLevel: ExertionLevel;
+  type: ActivityType;
+  category?: ActivityCategory;
+  foodType?: FoodType;
+}
+
+interface UpdateActivityParams {
+  name: string;
+  exertionLevel: ExertionLevel;
+  type: ActivityType;
+  category?: ActivityCategory;
+  foodType?: FoodType;
+}
+
 export function useActivities() {
-  const { activities } = useAppState();
+  const { activities, currentDate } = useAppState();
   const dispatch = useAppDispatch();
-  const { updateEnergy } = useStats();
+  const { updateEnergy, updateFood } = useStats();
 
   const addActivity = useCallback(
-    (
-      name: string,
-      startTime: number,
-      endTime: number,
-      exertionLevel: ExertionLevel,
-      type: ActivityType,
-      date: string
-    ) => {
+    (params: AddActivityParams) => {
       const activity: Activity = {
         id: crypto.randomUUID(),
-        name,
-        startTime,
-        endTime,
-        exertionLevel,
-        type,
-        date,
+        name: params.name,
+        startTime: params.startTime,
+        endTime: params.endTime,
+        exertionLevel: params.exertionLevel,
+        type: params.type,
+        category: params.category,
+        foodType: params.foodType,
+        date: currentDate,
       };
 
       dispatch({ type: 'ADD_ACTIVITY', payload: activity });
 
-      // Calculate and apply energy impact
-      const hourCount = endTime - startTime + 1;
-      const energyPerHour = calculateEnergyImpact(exertionLevel, type);
-      const totalEnergyImpact = energyPerHour * hourCount;
-
-      updateEnergy(totalEnergyImpact);
+      // Calculate and apply impacts
+      if (isSleepActivity(activity)) {
+        // Sleep activities restore energy at +15/hour
+        const energyGained = calculateSleepEnergy(activity);
+        updateEnergy(energyGained);
+      } else if (isFoodActivity(activity)) {
+        // Food activities add food points
+        const foodPoints = calculateFoodPoints(activity);
+        updateFood(foodPoints);
+      } else {
+        // Regular activities affect energy based on exertion level
+        const hourCount = activity.endTime - activity.startTime;
+        const energyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
+        const totalEnergyImpact = energyPerHour * hourCount;
+        updateEnergy(totalEnergyImpact);
+      }
 
       return activity;
     },
-    [dispatch, updateEnergy]
+    [dispatch, updateEnergy, updateFood, currentDate]
   );
 
   const updateActivity = useCallback(
-    (activity: Activity, oldActivity: Activity) => {
-      dispatch({ type: 'UPDATE_ACTIVITY', payload: activity });
+    (activityId: string, updates: UpdateActivityParams) => {
+      const oldActivity = activities.find(a => a.id === activityId);
+      if (!oldActivity) return;
 
-      // Reverse old energy impact
-      const oldHourCount = oldActivity.endTime - oldActivity.startTime + 1;
-      const oldEnergyPerHour = calculateEnergyImpact(oldActivity.exertionLevel, oldActivity.type);
-      const oldTotalImpact = oldEnergyPerHour * oldHourCount;
+      const updatedActivity: Activity = {
+        ...oldActivity,
+        ...updates,
+      };
 
-      // Apply new energy impact
-      const newHourCount = activity.endTime - activity.startTime + 1;
-      const newEnergyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
-      const newTotalImpact = newEnergyPerHour * newHourCount;
+      dispatch({ type: 'UPDATE_ACTIVITY', payload: updatedActivity });
 
-      // Net change
-      const netChange = newTotalImpact - oldTotalImpact;
-      updateEnergy(netChange);
+      // Reverse old impacts
+      if (isSleepActivity(oldActivity)) {
+        const oldEnergy = calculateSleepEnergy(oldActivity);
+        updateEnergy(-oldEnergy);
+      } else if (isFoodActivity(oldActivity)) {
+        const oldFood = calculateFoodPoints(oldActivity);
+        updateFood(-oldFood);
+      } else {
+        const oldHourCount = oldActivity.endTime - oldActivity.startTime;
+        const oldEnergyPerHour = calculateEnergyImpact(oldActivity.exertionLevel, oldActivity.type);
+        const oldTotalImpact = oldEnergyPerHour * oldHourCount;
+        updateEnergy(-oldTotalImpact);
+      }
+
+      // Apply new impacts
+      if (isSleepActivity(updatedActivity)) {
+        const newEnergy = calculateSleepEnergy(updatedActivity);
+        updateEnergy(newEnergy);
+      } else if (isFoodActivity(updatedActivity)) {
+        const newFood = calculateFoodPoints(updatedActivity);
+        updateFood(newFood);
+      } else {
+        const newHourCount = updatedActivity.endTime - updatedActivity.startTime;
+        const newEnergyPerHour = calculateEnergyImpact(
+          updatedActivity.exertionLevel,
+          updatedActivity.type
+        );
+        const newTotalImpact = newEnergyPerHour * newHourCount;
+        updateEnergy(newTotalImpact);
+      }
     },
-    [dispatch, updateEnergy]
+    [activities, dispatch, updateEnergy, updateFood]
   );
 
   const deleteActivity = useCallback(
@@ -74,19 +128,26 @@ export function useActivities() {
 
       dispatch({ type: 'DELETE_ACTIVITY', payload: activityId });
 
-      // Reverse energy impact
-      const hourCount = activity.endTime - activity.startTime + 1;
-      const energyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
-      const totalEnergyImpact = energyPerHour * hourCount;
-
-      updateEnergy(-totalEnergyImpact);
+      // Reverse impacts
+      if (isSleepActivity(activity)) {
+        const energyGained = calculateSleepEnergy(activity);
+        updateEnergy(-energyGained);
+      } else if (isFoodActivity(activity)) {
+        const foodPoints = calculateFoodPoints(activity);
+        updateFood(-foodPoints);
+      } else {
+        const hourCount = activity.endTime - activity.startTime;
+        const energyPerHour = calculateEnergyImpact(activity.exertionLevel, activity.type);
+        const totalEnergyImpact = energyPerHour * hourCount;
+        updateEnergy(-totalEnergyImpact);
+      }
     },
-    [activities, dispatch, updateEnergy]
+    [activities, dispatch, updateEnergy, updateFood]
   );
 
   const getActivitiesForHour = useCallback(
     (hour: number) => {
-      return activities.filter(activity => hour >= activity.startTime && hour <= activity.endTime);
+      return activities.filter(activity => hour >= activity.startTime && hour < activity.endTime);
     },
     [activities]
   );

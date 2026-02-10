@@ -1,23 +1,23 @@
 :root {
-  /* Colors - Light, airy, warm palette */
-  --color-bg-primary: #fafafa;
+  /* Colors - Bubblegum pop meets clean design */
+  --color-bg-primary: #ffeef8;
   --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #f5f5f5;
+  --color-bg-tertiary: #fce7f3;
 
-  --color-text-primary: #333333;
-  --color-text-secondary: #666666;
+  --color-text-primary: #831843;
+  --color-text-secondary: #be185d;
   --color-text-tertiary: #999999;
 
-  --color-accent-warm: #f4a460; /* Sandy brown */
-  --color-accent-light: #f0e68c; /* Khaki */
-  --color-accent-soft: #ffd7a8; /* Peach */
+  --color-accent-warm: #ec4899; /* Bubblegum pink */
+  --color-accent-light: #fce7f3; /* Light pink */
+  --color-accent-soft: #ffb3d9; /* Soft pink */
 
   --color-energy-high: #90ee90; /* Light green */
   --color-energy-medium: #ffd700; /* Gold */
   --color-energy-low: #ff6b6b; /* Light red */
 
-  --color-border: #e0e0e0;
-  --color-shadow: rgba(0, 0, 0, 0.05);
+  --color-border: #ffb3d9;
+  --color-shadow: rgba(236, 72, 153, 0.15);
 
   /* Spacing */
   --spacing-xs: 0.25rem;

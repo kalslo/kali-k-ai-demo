@@ -19,6 +19,6 @@ describe('App', () => {
         <App />
       </AppProvider>
     );
-    expect(screen.getByText(/your daily day planner/i)).toBeInTheDocument();
+    expect(screen.getByText(/plan your day!/i)).toBeInTheDocument();
   });
 });

@@ -1,29 +1,23 @@
 .time-block-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #ffffff 0%, #fef3f8 100%);
+  border-radius: 20px;
+  padding: var(--spacing-lg);
+  box-shadow:
+    0 4px 20px rgba(236, 72, 153, 0.1),
+    0 0 0 1px rgba(236, 72, 153, 0.1);
+  font-family: 'Caveat', cursive;
 }
 
-/* Tablet and up - 2 columns */
-@media (min-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .time-block-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
-  }
-}
-
-/* Desktop and up - 3 columns */
-@media (min-width: 1024px) {
-  .time-block-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Large desktop - 4 columns */
-@media (min-width: 1440px) {
-  .time-block-grid {
-    grid-template-columns: repeat(4, 1fr);
+    padding: var(--spacing-md);
+    gap: 0;
   }
 }

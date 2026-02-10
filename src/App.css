@@ -1,29 +1,43 @@
 .app {
   min-height: 100vh;
   padding: var(--spacing-xl);
+  background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
 }
 
 header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg) 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-header h1 {
-  font-size: 3rem;
-  font-weight: 300;
-  margin-bottom: var(--spacing-sm);
+.header__branding {
+  text-align: left;
+}
+
+.header__branding h1 {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: var(--spacing-xs);
   text-transform: lowercase;
-  color: var(--color-text-primary);
+  color: #ec4899;
+  letter-spacing: -0.02em;
 }
 
-header p {
-  font-size: 1.1rem;
+.header__branding p {
+  font-size: 1rem;
   color: var(--color-text-secondary);
   text-transform: lowercase;
+  margin: 0;
 }
 
 main {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -32,10 +46,11 @@ main {
 }
 
 .time-blocks-section h2 {
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-size: 1.75rem;
+  font-weight: 500;
   text-transform: lowercase;
-  color: var(--color-text);
-  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2xl);
   text-align: center;
+  letter-spacing: -0.01em;
 }

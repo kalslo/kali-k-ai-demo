@@ -1,0 +1,219 @@
+/**
+ * Theme Options for Window App
+ * Uncomment one theme at the bottom to apply
+ */
+
+/* ============================================
+   OPTION 1: MINIMALIST SCANDINAVIAN
+   Clean, airy, maximum whitespace
+   ============================================ */
+.theme-minimalist {
+  /* Background */
+  --app-bg: #ffffff;
+  --panel-bg: #ffffff;
+  --panel-border: #e8eaed;
+  --panel-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --panel-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* Colors */
+  --accent-primary: #4285f4;
+  --accent-light: #e8f0fe;
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+
+  /* Spacing */
+  --panel-padding: 32px;
+  --panel-radius: 8px;
+  --panel-gap: 16px;
+}
+
+/* ============================================
+   OPTION 2: WARM SUNSET
+   Warm tones, soft shadows, cozy feel
+   ============================================ */
+.theme-warm {
+  /* Background */
+  --app-bg: linear-gradient(to bottom, #fef6e4 0%, #ffe8cc 100%);
+  --panel-bg: #ffffff;
+  --panel-border: #f4d6b8;
+  --panel-shadow: 0 4px 12px rgba(178, 93, 40, 0.12);
+  --panel-shadow-hover: 0 8px 24px rgba(178, 93, 40, 0.18);
+
+  /* Colors */
+  --accent-primary: #e67e50;
+  --accent-light: #fff5e6;
+  --text-primary: #3d2817;
+  --text-secondary: #8d6e63;
+
+  /* Spacing */
+  --panel-padding: 24px;
+  --panel-radius: 16px;
+  --panel-gap: 20px;
+}
+
+/* ============================================
+   OPTION 3: FROSTED GLASS
+   Translucent panels, modern blur effects
+   ============================================ */
+.theme-glass {
+  /* Background */
+  --app-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(255, 255, 255, 0.4);
+  --panel-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  --panel-shadow-hover: 0 12px 48px rgba(31, 38, 135, 0.25);
+  --panel-blur: blur(10px);
+
+  /* Colors */
+  --accent-primary: #667eea;
+  --accent-light: rgba(102, 126, 234, 0.1);
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a68;
+
+  /* Spacing */
+  --panel-padding: 28px;
+  --panel-radius: 20px;
+  --panel-gap: 24px;
+}
+
+/* ============================================
+   OPTION 4: BOTANICAL GREEN
+   Nature-inspired, calming greens
+   ============================================ */
+.theme-botanical {
+  /* Background */
+  --app-bg: linear-gradient(to bottom, #f0f7f4 0%, #d4e9de 100%);
+  --panel-bg: #ffffff;
+  --panel-border: #b8d5c6;
+  --panel-shadow: 0 4px 16px rgba(40, 116, 74, 0.08);
+  --panel-shadow-hover: 0 8px 24px rgba(40, 116, 74, 0.14);
+
+  /* Colors */
+  --accent-primary: #2d8659;
+  --accent-light: #e8f5e9;
+  --text-primary: #1b4332;
+  --text-secondary: #52796f;
+
+  /* Spacing */
+  --panel-padding: 24px;
+  --panel-radius: 12px;
+  --panel-gap: 18px;
+}
+
+/* ============================================
+   OPTION 5: DARK MODE ELEGANCE
+   Sophisticated dark theme
+   ============================================ */
+.theme-dark {
+  /* Background */
+  --app-bg: linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%);
+  --panel-bg: #0f1419;
+  --panel-border: #2a2e3d;
+  --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --panel-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.7);
+
+  /* Colors */
+  --accent-primary: #64ffda;
+  --accent-light: rgba(100, 255, 218, 0.1);
+  --text-primary: #e6f1ff;
+  --text-secondary: #8892b0;
+
+  /* Spacing */
+  --panel-padding: 24px;
+  --panel-radius: 12px;
+  --panel-gap: 20px;
+}
+
+/* ============================================
+   OPTION 6: BUBBLEGUM POP
+   Playful, vibrant, fun
+   ============================================ */
+.theme-bubblegum {
+  /* Background */
+  --app-bg: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+  --panel-bg: #ffffff;
+  --panel-border: #ffb3d9;
+  --panel-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);
+  --panel-shadow-hover: 0 8px 32px rgba(236, 72, 153, 0.25);
+
+  /* Colors */
+  --accent-primary: #ec4899;
+  --accent-light: #fce7f3;
+  --text-primary: #831843;
+  --text-secondary: #be185d;
+
+  /* Spacing */
+  --panel-padding: 28px;
+  --panel-radius: 24px;
+  --panel-gap: 20px;
+}
+
+/* ============================================
+   Apply variables to components
+   ============================================ */
+.app {
+  background: var(--app-bg) !important;
+}
+
+.stats-panel,
+.date-navigator,
+.quick-actions,
+header {
+  background: var(--panel-bg) !important;
+  border: 2px solid var(--panel-border) !important;
+  box-shadow: var(--panel-shadow) !important;
+  border-radius: var(--panel-radius) !important;
+  padding: var(--panel-padding) !important;
+}
+
+.theme-glass .stats-panel,
+.theme-glass .date-navigator,
+.theme-glass .quick-actions,
+.theme-glass header {
+  backdrop-filter: var(--panel-blur) !important;
+  -webkit-backdrop-filter: var(--panel-blur) !important;
+}
+
+.stats-panel:hover,
+.date-navigator:hover,
+.quick-actions:hover {
+  box-shadow: var(--panel-shadow-hover) !important;
+}
+
+.time-block {
+  background: var(--panel-bg) !important;
+  border: 2px solid var(--panel-border) !important;
+  box-shadow: var(--panel-shadow) !important;
+}
+
+.time-block:hover {
+  box-shadow: var(--panel-shadow-hover) !important;
+}
+
+/* Modal styling */
+.modal-content,
+.time-block-modal__content {
+  background: var(--panel-bg) !important;
+  border: 2px solid var(--panel-border) !important;
+  box-shadow: var(--panel-shadow-hover) !important;
+}
+
+.theme-glass .modal-content,
+.theme-glass .time-block-modal__content {
+  backdrop-filter: var(--panel-blur) !important;
+  -webkit-backdrop-filter: var(--panel-blur) !important;
+}
+
+/* ============================================
+   CHOOSE YOUR THEME
+   Uncomment ONE of these lines:
+   ============================================ */
+
+/* body { @apply theme-minimalist; } */
+/* body { @apply theme-warm; } */
+/* body { @apply theme-glass; } */
+body {
+  @apply theme-botanical;
+}
+/* body { @apply theme-dark; } */
+/* body { @apply theme-bubblegum; } */

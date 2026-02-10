@@ -1,0 +1,123 @@
+.sleep-logger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+}
+
+.sleep-logger__header {
+  text-align: center;
+}
+
+.sleep-logger__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: lowercase;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.sleep-logger__subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+  margin: 0;
+}
+
+.sleep-logger__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.sleep-logger__time-fields {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--spacing-md);
+  align-items: end;
+}
+
+.sleep-logger__separator {
+  font-size: 1.5rem;
+  color: var(--color-text-secondary);
+  padding-bottom: var(--spacing-sm);
+}
+
+.sleep-logger__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.sleep-logger__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+.sleep-logger__select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1rem;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.sleep-logger__select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.sleep-logger__error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  text-transform: lowercase;
+  text-align: center;
+}
+
+.sleep-logger__summary {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 8px;
+}
+
+.sleep-logger__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.sleep-logger__stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+}
+
+.sleep-logger__stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.sleep-logger__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sleep-logger__select {
+    transition: none;
+  }
+}

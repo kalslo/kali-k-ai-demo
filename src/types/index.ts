@@ -15,6 +15,17 @@ export enum ActivityType {
   Restorative = 'restorative',
 }
 
+export enum ActivityCategory {
+  General = 'general',
+  Sleep = 'sleep',
+  Food = 'food',
+}
+
+export enum FoodType {
+  Meal = 'meal',
+  Snack = 'snack',
+}
+
 export enum MoodState {
   Sad = 'sad',
   Mad = 'mad',
@@ -30,6 +41,8 @@ export interface Activity {
   endTime: number; // Hour of day (0-23)
   exertionLevel: ExertionLevel;
   type: ActivityType;
+  category?: ActivityCategory; // Optional category for special activities
+  foodType?: FoodType; // Only for food category activities
   date: string; // ISO date string (YYYY-MM-DD)
 }
 
