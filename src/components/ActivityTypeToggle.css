@@ -1,0 +1,94 @@
+.activity-type-toggle {
+  width: 100%;
+}
+
+.activity-type-toggle__label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.activity-type-toggle__options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.activity-type-toggle__button {
+  min-height: 44px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.activity-type-toggle__button:hover {
+  background-color: #fff;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-type-toggle__button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.activity-type-toggle__button--active {
+  background-color: #fff;
+  border-width: 2px;
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-type-toggle__type-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+.activity-type-toggle__description {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+  display: none;
+}
+
+/* Color coding for activity types */
+.activity-type-toggle__button--exerting.activity-type-toggle__button--active {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.activity-type-toggle__button--exerting.activity-type-toggle__button--active
+  .activity-type-toggle__type-name {
+  color: #1e40af;
+}
+
+.activity-type-toggle__button--restorative.activity-type-toggle__button--active {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+}
+
+.activity-type-toggle__button--restorative.activity-type-toggle__button--active
+  .activity-type-toggle__type-name {
+  color: #6d28d9;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .activity-type-toggle__button {
+    transition: none;
+  }
+
+  .activity-type-toggle__button:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,23 @@
+.stats-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);
+  border: 2px solid var(--color-border);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.stats-panel__stat {
+  width: 100%;
+}
+
+/* Responsive layout for larger screens */
+@media (min-width: 768px) {
+  .stats-panel {
+    padding: var(--spacing-lg);
+  }
+}

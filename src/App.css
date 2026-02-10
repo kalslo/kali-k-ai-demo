@@ -1,0 +1,56 @@
+.app {
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg) 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header__branding {
+  text-align: left;
+}
+
+.header__branding h1 {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: var(--spacing-xs);
+  text-transform: lowercase;
+  color: #ec4899;
+  letter-spacing: -0.02em;
+}
+
+.header__branding p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+  margin: 0;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.time-blocks-section {
+  margin-top: var(--spacing-2xl);
+}
+
+.time-blocks-section h2 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  letter-spacing: -0.01em;
+}
