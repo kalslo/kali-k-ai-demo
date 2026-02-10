@@ -1,0 +1,41 @@
+.app {
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+}
+
+header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+header h1 {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: var(--spacing-sm);
+  text-transform: lowercase;
+  color: var(--color-text-primary);
+}
+
+header p {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+}
+
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.time-blocks-section {
+  margin-top: var(--spacing-2xl);
+}
+
+.time-blocks-section h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-transform: lowercase;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}

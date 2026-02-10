@@ -1,0 +1,145 @@
+.time-block {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.time-block:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.time-block--current {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #fbbf24;
+  box-shadow: var(--shadow-sm);
+}
+
+.time-block--empty {
+  background-color: var(--color-bg-secondary);
+}
+
+.time-block--has-activity {
+  background-color: #fff;
+}
+
+.time-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.time-block__time {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+}
+
+.time-block__current-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #f59e0b;
+  background-color: rgba(251, 191, 36, 0.2);
+  padding: 2px 8px;
+  border-radius: 8px;
+  text-transform: lowercase;
+}
+
+.time-block__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.time-block__activity-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: 1.4;
+}
+
+.time-block__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.time-block__duration {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+}
+
+.time-block__indicators {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.time-block__exertion,
+.time-block__type {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Exertion level colors */
+.time-block__exertion--very-low {
+  background-color: #86efac;
+}
+
+.time-block__exertion--low {
+  background-color: #4ade80;
+}
+
+.time-block__exertion--moderate {
+  background-color: #fbbf24;
+}
+
+.time-block__exertion--high {
+  background-color: #fb923c;
+}
+
+.time-block__exertion--very-high {
+  background-color: #f87171;
+}
+
+/* Activity type colors */
+.time-block__type--exerting {
+  background-color: #60a5fa;
+}
+
+.time-block__type--restorative {
+  background-color: #a78bfa;
+}
+
+.time-block__empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-block__empty-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+  opacity: 0.5;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .time-block {
+    transition: none;
+  }
+}

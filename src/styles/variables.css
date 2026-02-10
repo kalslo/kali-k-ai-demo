@@ -1,0 +1,53 @@
+:root {
+  /* Colors - Light, airy, warm palette */
+  --color-bg-primary: #fafafa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #f5f5f5;
+
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+
+  --color-accent-warm: #f4a460; /* Sandy brown */
+  --color-accent-light: #f0e68c; /* Khaki */
+  --color-accent-soft: #ffd7a8; /* Peach */
+
+  --color-energy-high: #90ee90; /* Light green */
+  --color-energy-medium: #ffd700; /* Gold */
+  --color-energy-low: #ff6b6b; /* Light red */
+
+  --color-border: #e0e0e0;
+  --color-shadow: rgba(0, 0, 0, 0.05);
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px var(--color-shadow);
+  --shadow-md: 0 2px 8px var(--color-shadow);
+  --shadow-lg: 0 4px 16px var(--color-shadow);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

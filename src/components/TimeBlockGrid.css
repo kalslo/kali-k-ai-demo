@@ -1,0 +1,29 @@
+.time-block-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+/* Tablet and up - 2 columns */
+@media (min-width: 768px) {
+  .time-block-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Desktop and up - 3 columns */
+@media (min-width: 1024px) {
+  .time-block-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large desktop - 4 columns */
+@media (min-width: 1440px) {
+  .time-block-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
